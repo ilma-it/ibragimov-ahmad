@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html class="dark" lang="ru">
+<head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <title>О проекте - Умная Теплица</title>
+  <meta name="description" content="Информация о проекте 'Умная Теплица', применённых технологиях и навыках разработчика."/>
+
+  <!-- Fonts & Icons -->
+  <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@300;400;500;600;700;800&family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap" rel="stylesheet"/>
+
+  <!-- Immediate Theme Initializer to prevent flash -->
+  <script>
+    (function() {
+      const saved = localStorage.getItem('theme') || 'dark';
+      if (saved === 'light') {
+        document.documentElement.classList.remove('dark');
+        document.documentElement.classList.add('light');
+      } else {
+        document.documentElement.classList.remove('light');
+        document.documentElement.classList.add('dark');
+      }
+    })();
+  </script>
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <script>
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "primary": "var(--color-primary, #ffb873)",
+            "primary-container": "var(--color-primary-container, #e88d23)",
+            "amber-glow": "var(--color-amber-glow, #FFBF69)",
+            "background": "var(--color-bg, #16130f)",
+            "surface": "var(--color-surface, #16130f)",
+            "surface-container": "var(--color-surface-container, #231f1b)",
+            "surface-variant": "var(--color-surface-variant, #39342f)",
+            "on-background": "var(--color-on-background, #eae1da)",
+            "on-surface": "var(--color-on-surface, #eae1da)",
+            "on-surface-variant": "var(--color-on-surface-variant, #dac2b0)",
+            "outline": "var(--color-outline, #a28d7c)",
+            "forest-green": "var(--color-forest-green, #1B241B)",
+            "secondary-container": "var(--color-secondary-container, #3e4d3e)",
+            "secondary-fixed": "var(--color-secondary-fixed, #d7e7d3)"
+          },
+          fontFamily: {
+            sans: ["'Hanken Grotesk'", "sans-serif"]
+          }
+        }
+      }
+    }
+  </script>
+  <link rel="stylesheet" href="assets/css/style.css"/>
+</head>
+
+<body class="bg-background text-on-background min-h-screen flex flex-col font-sans overflow-x-hidden selection:bg-primary-container selection:text-surface">
+
+  <!-- Global Museum Background -->
+  <div class="fixed inset-0 z-0 pointer-events-none overflow-hidden bg-background">
+    <div class="absolute inset-0 w-full h-full bg-cover bg-center md:bg-[center_25%] transition-opacity duration-700 ease-in-out dark:opacity-25 opacity-0 animate-breathe origin-center transform-gpu filter contrast-110 brightness-90" style="background-image: url('museum_horse_statue.jpg')"></div>
+    <div class="absolute inset-0 w-full h-full bg-cover bg-center md:bg-[center_25%] transition-opacity duration-700 ease-in-out dark:opacity-0 opacity-35 animate-breathe origin-center transform-gpu filter contrast-105 brightness-100" style="background-image: url('museum_horse_statue_light.jpg')"></div>
+    <div class="global-bg-overlay"></div>
+    <div class="grain-overlay"></div>
+    <div class="vignette-overlay"></div>
+  </div>
+  <div class="ambient-light ambient-light-amber w-[600px] h-[600px] bg-primary-container/10 top-10 right-20"></div>
+
+  <!-- Top Navigation Bar -->
+  <header class="bg-surface-container/60 backdrop-blur-2xl border-b border-white/5 fixed top-0 w-full z-50 transition-all">
+    <div class="max-w-7xl mx-auto px-4 md:px-8 h-16 flex items-center justify-between">
+      <div class="w-10"></div>
+
+      <!-- Desktop Navigation Menu -->
+      <nav id="desktop-nav" class="hidden md:flex items-center gap-1.5 bg-surface-container-lowest/70 px-2.5 py-1.5 rounded-full border border-white/10 backdrop-blur-xl shadow-[0_4px_25px_rgba(0,0,0,0.4)]">
+        <a href="index.html" class="nav-tab-link">
+          <span class="material-symbols-outlined">home</span> Главная
+        </a>
+        <a href="gallery.html" class="nav-tab-link">
+          <span class="material-symbols-outlined">photo_library</span> Галерея
+        </a>
+        <a href="model3d.html" class="nav-tab-link">
+          <span class="material-symbols-outlined">view_in_ar</span> 3D Модель
+        </a>
+        <a href="about.html" class="nav-tab-link active">
+          <span class="material-symbols-outlined">info</span> О проекте
+        </a>
+      </nav>
+
+      <!-- Right Header Actions -->
+      <div class="flex items-center gap-2">
+        <a href="model3d.html" class="px-4 py-2 text-xs font-semibold uppercase tracking-wider rounded-xl btn-neon hidden sm:inline-flex items-center gap-1.5">
+          <span class="material-symbols-outlined text-sm">3d_rotation</span> 3D Просмотр
+        </a>
+        <button onclick="toggleTheme(event)" class="theme-toggle-btn w-10 h-10 rounded-full glass-panel flex items-center justify-center text-on-surface-variant hover:text-white hover:border-primary-container/50 hover:shadow-[0_0_18px_rgba(232,141,35,0.4)] transition-all cursor-pointer shadow-md active:scale-95" title="Переключить тему (Светлая / Тёмная)">
+          <span class="theme-icon material-symbols-outlined text-xl">light_mode</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Floating Mobile Theme Toggle -->
+  <button onclick="toggleTheme(event)" class="theme-toggle-btn md:hidden fixed top-3.5 right-3.5 z-50 w-10 h-10 rounded-full glass-panel flex items-center justify-center text-on-surface-variant hover:text-white shadow-lg active:scale-90 border-white/10" title="Переключить тему">
+    <span class="theme-icon material-symbols-outlined text-xl">light_mode</span>
+  </button>
+
+  <!-- Main Content -->
+  <main class="flex-grow pt-24 pb-20 md:pt-32 md:pb-16 px-4 md:px-8 max-w-5xl mx-auto w-full z-10">
+    
+    <!-- Hero Introduction -->
+    <div class="text-center mb-8">
+      <h1 class="text-3xl sm:text-4xl font-bold tracking-tight text-white mb-3">
+        О проекте
+      </h1>
+      <p class="text-on-surface-variant text-sm sm:text-base max-w-xl mx-auto">
+        Автономный микроклимат, гидропоника и интерактивная 3D-визуализация.
+      </p>
+    </div>
+
+    <!-- Grid of Key Capabilities -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
+      
+      <div class="glass-panel p-6 border border-white/5 hover:border-primary-container/30 transition-all">
+        <div class="w-10 h-10 rounded-xl bg-primary-container/15 flex items-center justify-center text-primary-container mb-4">
+          <span class="material-symbols-outlined text-2xl">precision_manufacturing</span>
+        </div>
+        <h3 class="text-lg font-bold text-white mb-2">Автоматизация & IoT</h3>
+        <p class="text-on-surface-variant text-sm leading-relaxed">
+          Мониторинг микроклимата, освещения и подачи питания растений.
+        </p>
+      </div>
+
+      <div class="glass-panel p-6 border border-white/5 hover:border-primary-container/30 transition-all">
+        <div class="w-10 h-10 rounded-xl bg-primary-container/15 flex items-center justify-center text-primary-container mb-4">
+          <span class="material-symbols-outlined text-2xl">view_in_ar</span>
+        </div>
+        <h3 class="text-lg font-bold text-white mb-2">3D Моделирование</h3>
+        <p class="text-on-surface-variant text-sm leading-relaxed">
+          Интерактивная WebGL-модель на Three.js прямо в браузере.
+        </p>
+      </div>
+
+      <div class="glass-panel p-6 border border-white/5 hover:border-primary-container/30 transition-all">
+        <div class="w-10 h-10 rounded-xl bg-primary-container/15 flex items-center justify-center text-primary-container mb-4">
+          <span class="material-symbols-outlined text-2xl">solar_power</span>
+        </div>
+        <h3 class="text-lg font-bold text-white mb-2">Энергоэффективность</h3>
+        <p class="text-on-surface-variant text-sm leading-relaxed">
+          Адаптивное LED фитоосвещение и низкоэмиссионное остекление.
+        </p>
+      </div>
+
+      <div class="glass-panel p-6 border border-white/5 hover:border-primary-container/30 transition-all">
+        <div class="w-10 h-10 rounded-xl bg-primary-container/15 flex items-center justify-center text-primary-container mb-4">
+          <span class="material-symbols-outlined text-2xl">devices</span>
+        </div>
+        <h3 class="text-lg font-bold text-white mb-2">Веб-платформа</h3>
+        <p class="text-on-surface-variant text-sm leading-relaxed">
+          Адаптивный стеклянный интерфейс, оптимизированный под любые экраны.
+        </p>
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="relative z-10 border-t border-white/5 py-8 text-center text-sm text-on-surface-variant/70">
+    <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-4">
+      <div class="flex items-center gap-2">
+        <span class="material-symbols-outlined text-primary-container text-lg">eco</span>
+        <span class="text-white font-medium">Умная Теплица</span>
+      </div>
+      <div>
+        <span>© 2026</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Mobile Bottom Navigation Dock -->
+  <nav id="mobile-nav" class="md:hidden bg-surface-container/90 backdrop-blur-2xl border-t border-white/10 fixed bottom-0 left-0 w-full flex justify-around items-center py-2.5 px-2 z-50 shadow-[0_-10px_35px_rgba(0,0,0,0.8)]">
+    <a href="index.html" class="mobile-nav-link">
+      <span class="material-symbols-outlined text-xl mb-0.5">home</span>
+      <span class="text-[10px] uppercase tracking-wider">Главная</span>
+    </a>
+    <a href="gallery.html" class="mobile-nav-link">
+      <span class="material-symbols-outlined text-xl mb-0.5">photo_library</span>
+      <span class="text-[10px] uppercase tracking-wider">Галерея</span>
+    </a>
+    <a href="model3d.html" class="mobile-nav-link">
+      <span class="material-symbols-outlined text-xl mb-0.5">view_in_ar</span>
+      <span class="text-[10px] uppercase tracking-wider">3D Модель</span>
+    </a>
+    <a href="about.html" class="mobile-nav-link active">
+      <span class="material-symbols-outlined text-xl mb-0.5" style="font-variation-settings: 'FILL' 1;">info</span>
+      <span class="text-[10px] uppercase tracking-wider font-bold">О проекте</span>
+    </a>
+  </nav>
+
+  <script src="assets/js/app.js"></script>
+</body>
+</html>

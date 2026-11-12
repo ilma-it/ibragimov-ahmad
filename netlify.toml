@@ -1,0 +1,48 @@
+# Netlify Configuration for Умная Теплица Portfolio
+[build]
+  publish = "."
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "SAMEORIGIN"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+
+# Cache static assets (images, video, 3d models)
+[[headers]]
+  for = "/assets/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+    Access-Control-Allow-Origin = "*"
+
+# MIME types and caching for 3D GLB/GLTF model files
+[[headers]]
+  for = "/*.glb"
+  [headers.values]
+    Content-Type = "model/gltf-binary"
+    Access-Control-Allow-Origin = "*"
+
+[[headers]]
+  for = "/*.gltf"
+  [headers.values]
+    Content-Type = "model/gltf+json"
+    Access-Control-Allow-Origin = "*"
+
+[[headers]]
+  for = "/*.obj"
+  [headers.values]
+    Content-Type = "text/plain"
+    Access-Control-Allow-Origin = "*"
+
+[[headers]]
+  for = "/*.mtl"
+  [headers.values]
+    Content-Type = "text/plain"
+    Access-Control-Allow-Origin = "*"
+
+[[headers]]
+  for = "/*.mp4"
+  [headers.values]
+    Content-Type = "video/mp4"
+    Accept-Ranges = "bytes"

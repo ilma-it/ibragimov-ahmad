@@ -1,0 +1,12 @@
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+.BIN/
+.DS_Store
+*.tmp
+*.bak
+*.swp
+*~
+.vscode/
+.idea/
+.netlify/

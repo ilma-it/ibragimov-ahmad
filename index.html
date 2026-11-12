@@ -1,0 +1,725 @@
+<!DOCTYPE html>
+<html class="dark" lang="ru" style="scroll-behavior: smooth;">
+<head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <title>Умная Теплица</title>
+  <meta name="description" content="Инновационный проект умной теплицы: видеообзор, галерея 3D-рендеров и чертежей, интерактивная 3D-модель Three.js."/>
+  
+  <!-- Fonts & Icons -->
+  <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap" rel="stylesheet"/>
+  
+  <!-- Immediate Theme Initializer to prevent flash -->
+  <script>
+    (function() {
+      const saved = localStorage.getItem('theme') || 'dark';
+      if (saved === 'light') {
+        document.documentElement.classList.remove('dark');
+        document.documentElement.classList.add('light');
+      } else {
+        document.documentElement.classList.remove('light');
+        document.documentElement.classList.add('dark');
+      }
+    })();
+  </script>
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <script>
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "primary": "var(--color-primary, #ffb873)",
+            "primary-container": "var(--color-primary-container, #e88d23)",
+            "amber-glow": "var(--color-amber-glow, #FFBF69)",
+            "background": "var(--color-bg, #16130f)",
+            "surface": "var(--color-surface, #16130f)",
+            "surface-container": "var(--color-surface-container, #231f1b)",
+            "surface-variant": "var(--color-surface-variant, #39342f)",
+            "on-background": "var(--color-on-background, #eae1da)",
+            "on-surface": "var(--color-on-surface, #eae1da)",
+            "on-surface-variant": "var(--color-on-surface-variant, #dac2b0)",
+            "outline": "var(--color-outline, #a28d7c)",
+            "forest-green": "var(--color-forest-green, #1B241B)",
+            "secondary-container": "var(--color-secondary-container, #3e4d3e)",
+            "secondary-fixed": "var(--color-secondary-fixed, #d7e7d3)"
+          },
+          fontFamily: {
+            sans: ["'Hanken Grotesk'", "sans-serif"],
+            mono: ["'JetBrains Mono'", "monospace"]
+          }
+        }
+      }
+    }
+  </script>
+  <link rel="stylesheet" href="assets/css/style.css"/>
+
+  <style>
+    .viewport-container-main {
+      height: 620px;
+      min-height: 520px;
+    }
+    @media (max-width: 768px) {
+      .viewport-container-main {
+        height: 480px;
+        min-height: 420px;
+      }
+    }
+  </style>
+</head>
+
+<body class="bg-background text-on-background min-h-screen flex flex-col font-sans overflow-x-hidden selection:bg-primary-container selection:text-surface">
+  
+  <!-- Ambient Lights & Noise -->
+  <div class="grain-overlay"></div>
+  <div class="vignette-overlay"></div>
+  <div class="ambient-light ambient-light-amber w-[600px] h-[600px] bg-primary-container/10 -top-40 -left-40"></div>
+  <div class="ambient-light ambient-light-green w-[700px] h-[700px] bg-[#2a442a]/15 bottom-0 right-0"></div>
+
+  <!-- Top Sticky Navigation Bar -->
+  <header class="bg-surface-container/70 backdrop-blur-2xl border-b border-white/5 fixed top-0 w-full z-50 transition-all hidden md:block">
+    <div class="max-w-7xl mx-auto px-4 md:px-8 h-16 flex items-center justify-between">
+      <div class="w-10"></div>
+
+      <!-- Desktop Navigation Menu -->
+      <nav id="desktop-nav" class="hidden md:flex items-center gap-1.5 bg-surface-container-lowest/70 px-2.5 py-1.5 rounded-full border border-white/10 backdrop-blur-xl shadow-[0_4px_25px_rgba(0,0,0,0.4)]">
+        <a href="#hero" data-nav-target="hero" class="nav-tab-link active">
+          <span class="material-symbols-outlined">home</span> Главная
+        </a>
+        <a href="#gallery" data-nav-target="gallery" class="nav-tab-link">
+          <span class="material-symbols-outlined">photo_library</span> Галерея
+        </a>
+        <a href="#model3d" data-nav-target="model3d" class="nav-tab-link">
+          <span class="material-symbols-outlined">view_in_ar</span> 3D Модель
+        </a>
+        <a href="#about" data-nav-target="about" class="nav-tab-link">
+          <span class="material-symbols-outlined">info</span> О проекте
+        </a>
+      </nav>
+
+      <!-- Right Header Actions (Переключатель темы) -->
+      <div class="flex items-center justify-end w-10">
+        <button onclick="toggleTheme(event)" class="theme-toggle-btn w-10 h-10 rounded-full glass-panel flex items-center justify-center text-on-surface-variant hover:text-white hover:border-primary-container/50 hover:shadow-[0_0_18px_rgba(232,141,35,0.4)] transition-all cursor-pointer shadow-md active:scale-95" title="Переключить тему (Светлая / Тёмная)">
+          <span class="theme-icon material-symbols-outlined text-xl">light_mode</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Mobile Floating Theme Toggle Button -->
+  <div class="fixed top-3.5 right-3.5 z-50 md:hidden">
+    <button onclick="toggleTheme(event)" class="theme-toggle-btn w-10 h-10 rounded-full glass-panel flex items-center justify-center text-on-surface-variant hover:text-white border border-white/10 shadow-lg active:scale-95 transition-all" title="Переключить тему">
+      <span class="theme-icon material-symbols-outlined text-xl">light_mode</span>
+    </button>
+  </div>
+
+  <!-- =========================================================================
+       СЕКЦИЯ 1: ПРИВЕТСТВИЕ И ОБЗОР ТЕЛЕМЕТРИИ (#hero)
+       ========================================================================= -->
+  <section id="hero" class="relative min-h-screen flex flex-col items-center justify-center pt-24 pb-20 md:py-32 px-4 md:px-8 z-10 overflow-hidden">
+    
+    <!-- Hero Background: Музейный зал с двумя разными бронзовыми статуями лошадей по обеим сторонам -->
+    <div class="absolute inset-0 z-0 overflow-hidden pointer-events-none bg-background">
+      <img src="hero_dual_horses.jpg" alt="Музейная экспозиция: две бронзовые статуи лошадей на двух ногах" class="absolute inset-0 w-full h-full object-cover object-center filter brightness-[0.94] contrast-[1.08] transition-opacity duration-700 ease-in-out dark:opacity-100 opacity-0 pointer-events-none"/>
+      <img src="hero_dual_horses_light.jpg" alt="Музейная экспозиция: две бронзовые статуи лошадей на двух ногах" class="absolute inset-0 w-full h-full object-cover object-center filter brightness-[1.0] contrast-[1.02] transition-opacity duration-700 ease-in-out dark:opacity-0 opacity-100 pointer-events-none"/>
+      <!-- Атмосферная центрирующая виньетка и мягкий переход к фону страницы -->
+      <div class="hero-vignette"></div>
+      <div class="absolute inset-0 bg-gradient-to-t from-background via-transparent to-background/50 z-10"></div>
+    </div>
+
+    <!-- Central Hero Card -->
+    <div class="relative z-20 w-full max-w-4xl mx-auto flex flex-col items-center text-center">
+      
+      <div class="glass-panel p-8 md:p-14 w-full box-glow border border-primary-container/20">
+        
+        <!-- Имя автора над заголовком -->
+        <div class="text-sm sm:text-base font-mono uppercase tracking-[0.25em] text-primary-container font-semibold mb-3 drop-shadow-[0_0_12px_rgba(232,141,35,0.5)] select-none">
+          Ибрагимов Ахмад
+        </div>
+
+        <!-- Hero Headline -->
+        <h1 class="text-4xl sm:text-6xl md:text-7xl font-bold tracking-tight text-white mb-6 neon-glow leading-[1.1]">
+          Умная Теплица
+        </h1>
+
+        <!-- Description -->
+        <p class="text-base sm:text-lg text-on-surface-variant max-w-xl mx-auto mb-8 font-light leading-relaxed">
+          Автономный контроль микроклимата и 3D-визуализация агрокомплекса.
+        </p>
+
+        <!-- CTA Action Buttons -->
+        <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
+          <a href="#gallery" class="w-full sm:w-auto px-7 py-3.5 rounded-xl btn-neon text-sm font-bold tracking-wider uppercase flex items-center justify-center gap-2 shadow-lg hover:shadow-[0_0_30px_rgba(232,141,35,0.6)] cursor-pointer transition-all active:scale-95">
+            <span>Обзор</span>
+            <span class="material-symbols-outlined text-lg">arrow_downward</span>
+          </a>
+          <a href="#model3d" onclick="launch3DViewer()" class="w-full sm:w-auto px-7 py-3.5 rounded-xl glass-panel glass-panel-hover text-sm font-semibold text-white flex items-center justify-center gap-2 border-white/10 hover:border-primary-container hover:shadow-[0_0_25px_rgba(232,141,35,0.45)] cursor-pointer transition-all active:scale-95">
+            <span class="material-symbols-outlined text-primary-container text-lg">view_in_ar</span>
+            <span>3D Модель</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- Telemetry Real-time Widgets со свечением -->
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-5 mt-10 w-full">
+        <!-- Temp -->
+        <div class="glass-panel glass-panel-hover p-5 flex flex-col items-center text-center cursor-pointer group hover:border-primary-container/60 hover:shadow-[0_0_28px_rgba(232,141,35,0.35)] hover:-translate-y-1.5 transition-all duration-300">
+          <span class="material-symbols-outlined text-primary-container mb-2 text-3xl drop-shadow-[0_0_12px_rgba(232,141,35,0.6)] group-hover:scale-110 group-hover:text-white transition-all">device_thermostat</span>
+          <span id="telemetry-temp" class="text-2xl font-bold text-white mb-0.5 tracking-tight font-mono">24.5°C</span>
+          <span class="text-[11px] text-on-surface-variant uppercase tracking-wider">Температура</span>
+        </div>
+
+        <!-- Humidity -->
+        <div class="glass-panel glass-panel-hover p-5 flex flex-col items-center text-center cursor-pointer group hover:border-primary-container/60 hover:shadow-[0_0_28px_rgba(232,141,35,0.35)] hover:-translate-y-1.5 transition-all duration-300">
+          <span class="material-symbols-outlined text-primary-container mb-2 text-3xl drop-shadow-[0_0_12px_rgba(232,141,35,0.6)] group-hover:scale-110 group-hover:text-white transition-all">humidity_mid</span>
+          <span id="telemetry-hum" class="text-2xl font-bold text-white mb-0.5 tracking-tight font-mono">68%</span>
+          <span class="text-[11px] text-on-surface-variant uppercase tracking-wider">Влажность</span>
+        </div>
+
+        <!-- Light -->
+        <div class="glass-panel glass-panel-hover p-5 flex flex-col items-center text-center cursor-pointer group hover:border-primary-container/60 hover:shadow-[0_0_28px_rgba(232,141,35,0.35)] hover:-translate-y-1.5 transition-all duration-300">
+          <span class="material-symbols-outlined text-primary-container mb-2 text-3xl drop-shadow-[0_0_12px_rgba(232,141,35,0.6)] group-hover:scale-110 group-hover:text-white transition-all">light_mode</span>
+          <span id="telemetry-light" class="text-2xl font-bold text-white mb-0.5 tracking-tight font-mono">85%</span>
+          <span class="text-[11px] text-on-surface-variant uppercase tracking-wider">Освещение</span>
+        </div>
+
+        <!-- Irrigation -->
+        <div class="glass-panel glass-panel-hover p-5 flex flex-col items-center text-center cursor-pointer group hover:border-primary-container/60 hover:shadow-[0_0_28px_rgba(232,141,35,0.35)] hover:-translate-y-1.5 transition-all duration-300">
+          <span class="material-symbols-outlined text-primary-container mb-2 text-3xl drop-shadow-[0_0_12px_rgba(232,141,35,0.6)] group-hover:scale-110 group-hover:text-white transition-all">water_drop</span>
+          <span class="text-2xl font-bold text-white mb-0.5 tracking-tight font-mono">Оптим.</span>
+          <span class="text-[11px] text-on-surface-variant uppercase tracking-wider">Полив</span>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- =========================================================================
+       СЕКЦИЯ 2: ВИДЕООБЗОР И ГАЛЕРЕЯ (#gallery)
+       ========================================================================= -->
+  <section id="gallery" class="relative py-20 px-4 md:px-8 max-w-7xl mx-auto w-full z-10">
+    
+    <!-- Section Title & Filter Tabs -->
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
+      <h2 class="text-3xl sm:text-4xl font-bold tracking-tight text-white neon-glow">
+        Галерея
+      </h2>
+
+      <!-- Filter Buttons -->
+      <div class="flex flex-wrap gap-2">
+        <button data-filter-btn="all" class="filter-btn active">Все</button>
+        <button data-filter-btn="rendered" class="filter-btn">Рендеры</button>
+        <button data-filter-btn="raw" class="filter-btn">3D / Схемы</button>
+      </div>
+    </div>
+
+    <!-- Bento Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-12 gap-5">
+
+      <!-- 1. Главный Видеоблок (8 колонок) -->
+      <div class="md:col-span-8 glass-panel rounded-2xl overflow-hidden relative flex flex-col justify-end group shadow-2xl border border-primary-container/30 min-h-[380px] md:min-h-[440px]" data-gallery-category="all" data-video-container>
+        <video 
+          id="project-video"
+          src="assets/video/greenhouse-overview.mp4" 
+          poster="assets/images/rendered/render-architecture.jpg"
+          preload="metadata"
+          playsinline
+          class="absolute inset-0 w-full h-full object-cover z-0 cursor-pointer"
+        ></video>
+
+        <div class="absolute inset-0 bg-gradient-to-t from-background via-background/30 to-transparent z-10 pointer-events-none"></div>
+
+        <!-- Big Play Button Overlay -->
+        <div data-play-overlay class="absolute inset-0 z-20 flex items-center justify-center pointer-events-none transition-opacity duration-300">
+          <div class="w-16 h-16 rounded-full bg-primary-container/90 text-surface flex items-center justify-center shadow-[0_0_30px_rgba(232,141,35,0.7)] group-hover:scale-110 transition-transform cursor-pointer pointer-events-auto">
+            <span class="material-symbols-outlined text-3xl ml-1">play_arrow</span>
+          </div>
+        </div>
+
+        <!-- Video Controls Bar -->
+        <div class="relative z-20 p-5 md:p-6 flex items-center justify-between">
+          <h3 class="text-xl md:text-2xl font-bold text-white tracking-tight">Видеопрезентация</h3>
+          
+          <div class="flex items-center gap-2 bg-surface/70 backdrop-blur-md px-3 py-1.5 rounded-full border border-white/10">
+            <button data-video-play class="text-white hover:text-primary-container transition-colors flex items-center" title="Воспроизведение / Пауза">
+              <span class="material-symbols-outlined text-lg">play_arrow</span>
+            </button>
+            <button data-video-mute class="text-white hover:text-primary-container transition-colors flex items-center" title="Звук">
+              <span class="material-symbols-outlined text-lg">volume_up</span>
+            </button>
+            <button data-video-fullscreen class="text-white hover:text-primary-container transition-colors flex items-center" title="На весь экран">
+              <span class="material-symbols-outlined text-lg">fullscreen</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 2. Архитектура (4 колонки) -->
+      <a href="#" 
+         data-gallery-category="rendered"
+         data-lightbox-src="assets/images/rendered/render-architecture.jpg"
+         data-lightbox-title="Архитектурный концепт: Общий вид теплицы"
+         data-lightbox-cat="Отрендеренное фото"
+         class="md:col-span-4 glass-panel glass-panel-hover rounded-2xl overflow-hidden group relative p-5 flex flex-col justify-end min-h-[220px] md:min-h-[440px]">
+        <img src="assets/images/rendered/render-architecture.jpg" alt="Архитектура" class="absolute inset-0 w-full h-full object-cover z-0 transition-transform duration-700 group-hover:scale-105 opacity-80"/>
+        <div class="absolute inset-0 bg-gradient-to-t from-background via-background/25 to-transparent z-10"></div>
+        <div class="relative z-20 flex items-center justify-between">
+          <h4 class="text-lg md:text-xl font-bold text-white">Архитектура</h4>
+          <span class="material-symbols-outlined text-white/70 group-hover:text-primary-container text-sm">open_in_full</span>
+        </div>
+      </a>
+
+      <!-- 3. Сенсоры IoT (4 колонки) -->
+      <a href="#" 
+         data-gallery-category="rendered"
+         data-lightbox-src="assets/images/rendered/render-sensors-macro.jpg"
+         data-lightbox-title="Микроэлектроника: IoT датчики"
+         data-lightbox-cat="Отрендеренное фото"
+         class="md:col-span-4 glass-panel glass-panel-hover rounded-2xl overflow-hidden group relative p-5 flex flex-col justify-end min-h-[240px]">
+        <img src="assets/images/rendered/render-sensors-macro.jpg" alt="Датчики" class="absolute inset-0 w-full h-full object-cover z-0 transition-transform duration-700 group-hover:scale-105 opacity-75"/>
+        <div class="absolute inset-0 bg-gradient-to-t from-background via-background/25 to-transparent z-10"></div>
+        <div class="relative z-20 flex items-center justify-between">
+          <h4 class="text-lg font-bold text-white">IoT Сенсоры</h4>
+          <span class="material-symbols-outlined text-white/70 group-hover:text-primary-container text-sm">open_in_full</span>
+        </div>
+      </a>
+
+      <!-- 4. Исходная 3D модель SketchUp (4 колонки) -->
+      <a href="#" 
+         data-gallery-category="raw"
+         data-lightbox-src="assets/images/raw/raw-3d-model-sketchup.jpg"
+         data-lightbox-title="3D Модель CAD"
+         data-lightbox-cat="Сырое фото / Чертеж"
+         class="md:col-span-4 glass-panel glass-panel-hover rounded-2xl overflow-hidden group relative p-5 flex flex-col justify-end min-h-[240px]">
+        <img src="assets/images/raw/raw-3d-model-sketchup.jpg" alt="Сырая 3D модель" class="absolute inset-0 w-full h-full object-cover z-0 transition-transform duration-700 group-hover:scale-105 opacity-80"/>
+        <div class="absolute inset-0 bg-gradient-to-t from-background via-background/25 to-transparent z-10"></div>
+        <div class="relative z-20 flex items-center justify-between">
+          <h4 class="text-lg font-bold text-white">3D Каркас</h4>
+          <span class="material-symbols-outlined text-white/70 group-hover:text-primary-container text-sm">open_in_full</span>
+        </div>
+      </a>
+
+      <!-- 5. Робот-ассистент (4 колонки) -->
+      <a href="#" 
+         data-gallery-category="rendered"
+         data-lightbox-src="assets/images/rendered/render-robot-assistant.jpg"
+         data-lightbox-title="Роботизированный ассистент"
+         data-lightbox-cat="Отрендеренное фото"
+         class="md:col-span-4 glass-panel glass-panel-hover rounded-2xl overflow-hidden group relative p-5 flex flex-col justify-end min-h-[240px]">
+        <img src="assets/images/rendered/render-robot-assistant.jpg" alt="Робот ассистент" class="absolute inset-0 w-full h-full object-cover z-0 transition-transform duration-700 group-hover:scale-105 opacity-75"/>
+        <div class="absolute inset-0 bg-gradient-to-t from-background via-background/25 to-transparent z-10"></div>
+        <div class="relative z-20 flex items-center justify-between">
+          <h4 class="text-lg font-bold text-white">Робот-ассистент</h4>
+          <span class="material-symbols-outlined text-white/70 group-hover:text-primary-container text-sm">open_in_full</span>
+        </div>
+      </a>
+
+      <!-- 6. Гидропоника (4 колонки) -->
+      <a href="#" 
+         data-gallery-category="rendered"
+         data-lightbox-src="assets/images/rendered/render-hydroponics-crops.jpg"
+         data-lightbox-title="Гидропонные модули"
+         data-lightbox-cat="Отрендеренное фото"
+         class="md:col-span-4 glass-panel glass-panel-hover rounded-2xl overflow-hidden group relative p-5 flex flex-col justify-end min-h-[240px]">
+        <img src="assets/images/rendered/render-hydroponics-crops.jpg" alt="Гидропоника" class="absolute inset-0 w-full h-full object-cover z-0 transition-transform duration-700 group-hover:scale-105 opacity-75"/>
+        <div class="absolute inset-0 bg-gradient-to-t from-background via-background/25 to-transparent z-10"></div>
+        <div class="relative z-20 flex items-center justify-between">
+          <h4 class="text-lg font-bold text-white">Гидропоника</h4>
+          <span class="material-symbols-outlined text-white/70 group-hover:text-primary-container text-sm">open_in_full</span>
+        </div>
+      </a>
+
+      <!-- 7. Стеллажи (4 колонки) -->
+      <a href="#" 
+         data-gallery-category="raw"
+         data-lightbox-src="assets/images/raw/raw-shelves-wireframe.jpg"
+         data-lightbox-title="Чертеж стеллажных систем"
+         data-lightbox-cat="Сырое фото / Чертеж"
+         class="md:col-span-4 glass-panel glass-panel-hover rounded-2xl overflow-hidden group relative p-5 flex flex-col justify-end min-h-[240px]">
+        <img src="assets/images/raw/raw-shelves-wireframe.jpg" alt="Чертежи стеллажей" class="absolute inset-0 w-full h-full object-cover z-0 transition-transform duration-700 group-hover:scale-105 opacity-70"/>
+        <div class="absolute inset-0 bg-gradient-to-t from-background via-background/25 to-transparent z-10"></div>
+        <div class="relative z-20 flex items-center justify-between">
+          <h4 class="text-lg font-bold text-white">Стеллажи</h4>
+          <span class="material-symbols-outlined text-white/70 group-hover:text-primary-container text-sm">open_in_full</span>
+        </div>
+      </a>
+
+      <!-- 8. Силовой каркас (4 колонки) -->
+      <a href="#" 
+         data-gallery-category="raw"
+         data-lightbox-src="assets/images/raw/raw-greenhouse-frame.jpg"
+         data-lightbox-title="Силовой каркас теплицы"
+         data-lightbox-cat="Сырое фото / Чертеж"
+         class="md:col-span-4 glass-panel glass-panel-hover rounded-2xl overflow-hidden group relative p-5 flex flex-col justify-end min-h-[240px]">
+        <img src="assets/images/raw/raw-greenhouse-frame.jpg" alt="Каркас" class="absolute inset-0 w-full h-full object-cover z-0 transition-transform duration-700 group-hover:scale-105 opacity-70"/>
+        <div class="absolute inset-0 bg-gradient-to-t from-background via-background/25 to-transparent z-10"></div>
+        <div class="relative z-20 flex items-center justify-between">
+          <h4 class="text-lg font-bold text-white">Силовой каркас</h4>
+          <span class="material-symbols-outlined text-white/70 group-hover:text-primary-container text-sm">open_in_full</span>
+        </div>
+      </a>
+
+    </div>
+  </section>
+
+
+  <!-- =========================================================================
+       СЕКЦИЯ 3: ИНТЕРАКТИВНАЯ 3D МОДЕЛЬ (THREE.JS) (#model3d)
+       ========================================================================= -->
+  <section id="model3d" class="relative py-20 px-4 md:px-8 max-w-7xl mx-auto w-full z-10">
+    
+    <!-- Section Title -->
+    <div class="mb-6">
+      <h2 class="text-3xl sm:text-4xl font-bold tracking-tight text-white neon-glow">
+        3D Модель
+      </h2>
+    </div>
+
+    <!-- 3D Viewport Card Container -->
+    <div id="viewer-card" class="glass-panel viewport-container-main w-full rounded-2xl flex flex-col relative overflow-hidden group shadow-2xl border border-primary-container/25">
+      
+      <!-- Canvas Injected Here -->
+      <div id="3d-viewport" class="w-full h-full relative cursor-grab active:cursor-grabbing"></div>
+
+      <!-- Start 3D Model Button Overlay -->
+      <div id="model-start-overlay" class="absolute inset-0 z-40 bg-surface-container/95 backdrop-blur-2xl flex flex-col items-center justify-center p-6 text-center transition-all duration-500">
+        <div class="w-16 h-16 rounded-2xl bg-primary-container/15 border border-primary-container/40 flex items-center justify-center text-primary-container mb-4 shadow-[0_0_30px_rgba(232,141,35,0.4)]">
+          <span class="material-symbols-outlined text-4xl">view_in_ar</span>
+        </div>
+        <h3 class="text-xl sm:text-2xl font-bold text-white mb-5 tracking-tight">3D Визуализация</h3>
+        <button id="btn-start-3d" onclick="launch3DViewer()" class="px-7 py-3.5 rounded-xl btn-neon text-sm font-bold text-primary-container hover:text-white flex items-center gap-2.5 shadow-lg hover:shadow-[0_0_35px_rgba(232,141,35,0.7)] cursor-pointer transition-all active:scale-95">
+          <span class="material-symbols-outlined text-xl">play_circle</span>
+          <span>Запустить 3D модель</span>
+        </button>
+      </div>
+
+      <!-- Loading State Overlay (Отображается в момент загрузки файлов) -->
+      <div id="model-loading-overlay" class="hidden absolute inset-0 z-30 bg-background/90 backdrop-blur-md flex flex-col items-center justify-center p-6 transition-opacity duration-500">
+        <div class="w-16 h-16 rounded-2xl bg-primary-container/15 border border-primary-container/40 flex items-center justify-center text-primary-container mb-6 animate-pulse shadow-[0_0_25px_rgba(232,141,35,0.3)]">
+          <span class="material-symbols-outlined text-4xl animate-spin">progress_activity</span>
+        </div>
+        <h3 class="text-xl font-bold text-white mb-2">Загрузка 3D модели теплицы</h3>
+        <p id="model-loading-text" class="text-sm text-on-surface-variant mb-5 font-mono">Инициализация Three.js...</p>
+        
+        <div class="w-64 max-w-full h-2 bg-surface-variant rounded-full overflow-hidden border border-white/10">
+          <div id="model-loading-bar" class="h-full bg-gradient-to-r from-primary-container to-amber-glow transition-all duration-300 w-0 shadow-[0_0_10px_rgba(232,141,35,0.8)]"></div>
+        </div>
+      </div>
+
+      <!-- Corner Accents -->
+      <div class="hud-corner hud-corner-tl"></div>
+      <div class="hud-corner hud-corner-tr"></div>
+      <div class="hud-corner hud-corner-bl"></div>
+      <div class="hud-corner hud-corner-br"></div>
+
+      <!-- Top Toolbar (Presets & Lighting) -->
+      <div class="absolute top-4 left-4 right-4 z-20 flex flex-wrap items-center justify-between gap-3 pointer-events-none">
+        
+        <!-- Camera Angle Presets -->
+        <div class="flex items-center gap-1.5 p-1.5 rounded-xl bg-surface-container/85 backdrop-blur-xl border border-white/10 shadow-lg pointer-events-auto">
+          <span class="text-[11px] font-mono text-on-surface-variant/70 uppercase tracking-widest px-2 hidden sm:inline-block">Камера:</span>
+          <button id="btn-view-iso" class="px-3 py-1.5 rounded-lg text-xs font-semibold text-on-surface hover:text-white hover:bg-white/10 hover:border hover:border-primary-container/40 hover:shadow-[0_0_15px_rgba(232,141,35,0.35)] transition-all flex items-center gap-1 cursor-pointer" title="Изометрический вид">
+            <span class="material-symbols-outlined text-sm">view_in_ar</span> Изометрия
+          </button>
+          <button id="btn-view-top" class="px-3 py-1.5 rounded-lg text-xs font-semibold text-on-surface hover:text-white hover:bg-white/10 hover:border hover:border-primary-container/40 hover:shadow-[0_0_15px_rgba(232,141,35,0.35)] transition-all flex items-center gap-1 cursor-pointer" title="Вид сверху (план)">
+            <span class="material-symbols-outlined text-sm">expand_circle_up</span> Сверху
+          </button>
+          <button id="btn-view-front" class="px-3 py-1.5 rounded-lg text-xs font-semibold text-on-surface hover:text-white hover:bg-white/10 hover:border hover:border-primary-container/40 hover:shadow-[0_0_15px_rgba(232,141,35,0.35)] transition-all flex items-center gap-1 cursor-pointer" title="Вид спереди (фасад)">
+            <span class="material-symbols-outlined text-sm">crop_portrait</span> Фасад
+          </button>
+          <button id="btn-zoom-in" class="px-2 py-1.5 rounded-lg text-xs font-semibold text-on-surface hover:text-white hover:bg-white/10 hover:border hover:border-primary-container/40 hover:shadow-[0_0_15px_rgba(232,141,35,0.35)] transition-all flex items-center cursor-pointer" title="Приблизить (+)">
+            <span class="material-symbols-outlined text-sm">zoom_in</span>
+          </button>
+          <button id="btn-zoom-out" class="px-2 py-1.5 rounded-lg text-xs font-semibold text-on-surface hover:text-white hover:bg-white/10 hover:border hover:border-primary-container/40 hover:shadow-[0_0_15px_rgba(232,141,35,0.35)] transition-all flex items-center cursor-pointer" title="Отдалить (-)">
+            <span class="material-symbols-outlined text-sm">zoom_out</span>
+          </button>
+          <button id="btn-view-reset" class="px-2.5 py-1.5 rounded-lg text-xs font-semibold text-primary-container hover:bg-white/10 hover:border hover:border-primary-container/40 hover:shadow-[0_0_15px_rgba(232,141,35,0.35)] transition-all flex items-center cursor-pointer" title="Сбросить положение камеры">
+            <span class="material-symbols-outlined text-sm">restart_alt</span>
+          </button>
+        </div>
+
+        <!-- Render Tools (Lighting, Wireframe, Fullscreen) -->
+        <div class="flex items-center gap-1.5 p-1.5 rounded-xl bg-surface-container/85 backdrop-blur-xl border border-white/10 shadow-lg pointer-events-auto">
+          
+          <!-- Auto-rotate Toggle -->
+          <button id="btn-toggle-rotate" class="px-3 py-1.5 rounded-lg text-xs font-semibold text-white hover:text-white hover:bg-white/10 transition-all flex items-center gap-1.5 bg-primary-container/20 border border-primary-container/50 shadow-[0_0_15px_rgba(232,141,35,0.35)] hover:shadow-[0_0_22px_rgba(232,141,35,0.5)] cursor-pointer" title="Включить / выключить автовращение">
+            <span class="material-symbols-outlined text-sm text-primary-container">autorenew</span>
+            <span class="hidden sm:inline">360° Вращение</span>
+          </button>
+
+          <!-- Lighting Mode Toggle -->
+          <button id="btn-toggle-light" class="px-3 py-1.5 rounded-lg text-xs font-semibold text-on-surface hover:text-white hover:bg-white/10 hover:border hover:border-primary-container/40 hover:shadow-[0_0_15px_rgba(232,141,35,0.35)] transition-all flex items-center gap-1.5 cursor-pointer" title="Сменить время суток / освещение">
+            <span class="material-symbols-outlined text-sm text-primary-container">light_mode</span>
+            <span id="light-mode-label" class="hidden sm:inline font-mono">Закат (Осень)</span>
+          </button>
+
+          <!-- Wireframe Toggle -->
+          <button id="btn-toggle-wireframe" class="p-1.5 rounded-lg text-on-surface hover:text-white hover:bg-white/10 hover:border hover:border-primary-container/40 hover:shadow-[0_0_15px_rgba(232,141,35,0.35)] transition-all flex items-center cursor-pointer" title="Сетка / Каркас (Wireframe)">
+            <span class="material-symbols-outlined text-base">grid_4x4</span>
+          </button>
+
+          <!-- Fullscreen Toggle -->
+          <button id="btn-toggle-fullscreen" class="p-1.5 rounded-lg text-on-surface hover:text-white hover:bg-white/10 hover:border hover:border-primary-container/40 hover:shadow-[0_0_15px_rgba(232,141,35,0.35)] transition-all flex items-center cursor-pointer" title="На весь экран">
+            <span class="material-symbols-outlined text-base">fullscreen</span>
+          </button>
+
+          <!-- Close 3D Model Button -->
+          <button id="btn-close-3d" onclick="close3DViewer()" class="px-2.5 py-1.5 rounded-lg text-xs font-semibold text-rose-700 dark:text-rose-300 hover:text-rose-900 dark:hover:text-white bg-rose-500/10 dark:bg-rose-950/40 hover:bg-rose-500/20 dark:hover:bg-rose-900/60 border border-rose-500/30 hover:border-rose-500/60 hover:shadow-[0_0_15px_rgba(244,63,94,0.35)] transition-all flex items-center gap-1 cursor-pointer active:scale-95" title="Закрыть 3D модель">
+            <span class="material-symbols-outlined text-base">close</span>
+            <span class="hidden sm:inline">Закрыть</span>
+          </button>
+        </div>
+
+      </div>
+
+      <!-- Bottom Floating Instructions HUD Pill (Отдельно для ПК и телефона) -->
+      <div class="absolute bottom-4 left-1/2 -translate-x-1/2 z-20 pointer-events-none transition-all duration-300">
+        <!-- Для ПК -->
+        <div class="hidden md:flex items-center gap-3 bg-surface-container/90 backdrop-blur-md border border-primary-container/30 px-4 py-1.5 rounded-full shadow-2xl">
+          <span class="flex items-center gap-1.5 text-xs text-white/90 font-medium">
+            <span class="material-symbols-outlined text-primary-container text-sm">mouse</span>
+            <span><b class="text-white">ЛКМ:</b> Вращение</span>
+          </span>
+          <span class="w-1 h-1 rounded-full bg-primary-container/50"></span>
+          <span class="flex items-center gap-1.5 text-xs text-white/90 font-medium">
+            <span class="material-symbols-outlined text-primary-container text-sm">zoom_in</span>
+            <span><b class="text-white">Колесо:</b> Зум</span>
+          </span>
+          <span class="w-1 h-1 rounded-full bg-primary-container/50"></span>
+          <span class="flex items-center gap-1.5 text-xs text-white/90 font-medium">
+            <span class="material-symbols-outlined text-primary-container text-sm">pan_tool</span>
+            <span><b class="text-white">ПКМ:</b> Сдвиг</span>
+          </span>
+        </div>
+
+        <!-- Для Телефона -->
+        <div class="flex md:hidden items-center gap-2.5 bg-surface-container/90 backdrop-blur-md border border-primary-container/30 px-3.5 py-1.5 rounded-full shadow-2xl">
+          <span class="flex items-center gap-1 text-[11px] text-white/90 font-medium">
+            <span class="material-symbols-outlined text-primary-container text-sm">touch_app</span>
+            <span>1 палец — 360°</span>
+          </span>
+          <span class="w-1 h-1 rounded-full bg-primary-container/50"></span>
+          <span class="flex items-center gap-1 text-[11px] text-white/90 font-medium">
+            <span class="material-symbols-outlined text-primary-container text-sm">pinch</span>
+            <span>2 пальца — Зум</span>
+          </span>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Подсказки по управлению: отдельно для ПК и отдельно для телефона -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+      
+      <!-- Подсказки для ПК -->
+      <div class="glass-panel p-5 rounded-2xl border border-white/5 hover:border-primary-container/30 transition-all flex flex-col gap-3">
+        <div class="flex items-center gap-2.5 pb-2.5 border-b border-white/10">
+          <div class="w-8 h-8 rounded-lg bg-primary-container/15 flex items-center justify-center text-primary-container">
+            <span class="material-symbols-outlined text-lg">desktop_windows</span>
+          </div>
+          <div>
+            <h4 class="text-sm font-bold text-white tracking-wide">Управление на ПК</h4>
+            <p class="text-[11px] text-on-surface-variant/80">Компьютер и мышь</p>
+          </div>
+        </div>
+        <div class="grid grid-cols-3 gap-2">
+          <div class="flex flex-col sm:flex-row items-start sm:items-center gap-2 bg-surface-variant/30 p-2.5 rounded-xl border border-white/5">
+            <span class="material-symbols-outlined text-primary-container text-lg shrink-0">mouse</span>
+            <div>
+              <div class="text-xs font-bold text-white">ЛКМ</div>
+              <div class="text-[11px] text-on-surface-variant">Вращение 360°</div>
+            </div>
+          </div>
+          <div class="flex flex-col sm:flex-row items-start sm:items-center gap-2 bg-surface-variant/30 p-2.5 rounded-xl border border-white/5">
+            <span class="material-symbols-outlined text-primary-container text-lg shrink-0">zoom_in</span>
+            <div>
+              <div class="text-xs font-bold text-white">Колёсико</div>
+              <div class="text-[11px] text-on-surface-variant">Масштаб / Зум</div>
+            </div>
+          </div>
+          <div class="flex flex-col sm:flex-row items-start sm:items-center gap-2 bg-surface-variant/30 p-2.5 rounded-xl border border-white/5">
+            <span class="material-symbols-outlined text-primary-container text-lg shrink-0">pan_tool</span>
+            <div>
+              <div class="text-xs font-bold text-white">ПКМ</div>
+              <div class="text-[11px] text-on-surface-variant">Панорама</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Подсказки для телефона -->
+      <div class="glass-panel p-5 rounded-2xl border border-white/5 hover:border-primary-container/30 transition-all flex flex-col gap-3">
+        <div class="flex items-center gap-2.5 pb-2.5 border-b border-white/10">
+          <div class="w-8 h-8 rounded-lg bg-primary-container/15 flex items-center justify-center text-primary-container">
+            <span class="material-symbols-outlined text-lg">smartphone</span>
+          </div>
+          <div>
+            <h4 class="text-sm font-bold text-white tracking-wide">Управление на телефоне</h4>
+            <p class="text-[11px] text-on-surface-variant/80">Сенсорные жесты</p>
+          </div>
+        </div>
+        <div class="grid grid-cols-3 gap-2">
+          <div class="flex flex-col sm:flex-row items-start sm:items-center gap-2 bg-surface-variant/30 p-2.5 rounded-xl border border-white/5">
+            <span class="material-symbols-outlined text-primary-container text-lg shrink-0">touch_app</span>
+            <div>
+              <div class="text-xs font-bold text-white">1 палец</div>
+              <div class="text-[11px] text-on-surface-variant">Вращение 360°</div>
+            </div>
+          </div>
+          <div class="flex flex-col sm:flex-row items-start sm:items-center gap-2 bg-surface-variant/30 p-2.5 rounded-xl border border-white/5">
+            <span class="material-symbols-outlined text-primary-container text-lg shrink-0">pinch</span>
+            <div>
+              <div class="text-xs font-bold text-white">Щипок</div>
+              <div class="text-[11px] text-on-surface-variant">Масштаб / Зум</div>
+            </div>
+          </div>
+          <div class="flex flex-col sm:flex-row items-start sm:items-center gap-2 bg-surface-variant/30 p-2.5 rounded-xl border border-white/5">
+            <span class="material-symbols-outlined text-primary-container text-lg shrink-0">swipe_vertical</span>
+            <div>
+              <div class="text-xs font-bold text-white">2 пальца</div>
+              <div class="text-[11px] text-on-surface-variant">Панорама</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+  </section>
+
+
+  <!-- =========================================================================
+       СЕКЦИЯ 4: О ПРОЕКТЕ И ТЕХНОЛОГИЯХ (#about)
+       ========================================================================= -->
+  <section id="about" class="relative py-14 md:py-16 px-4 md:px-8 max-w-5xl mx-auto w-full z-10">
+    
+    <div class="text-center mb-10">
+      <h2 class="text-3xl sm:text-4xl font-bold tracking-tight text-white neon-glow mb-3">
+        О проекте
+      </h2>
+      <p class="text-on-surface-variant text-sm sm:text-base max-w-xl mx-auto">
+        Комплекс умной теплицы: автономный микроклимат, гидропоника и веб-визуализация.
+      </p>
+    </div>
+
+    <!-- Grid of Key Capabilities -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+      
+      <div class="glass-panel p-6 border border-white/5 hover:border-primary-container/30 transition-all">
+        <div class="w-10 h-10 rounded-xl bg-primary-container/15 flex items-center justify-center text-primary-container mb-4">
+          <span class="material-symbols-outlined text-2xl">precision_manufacturing</span>
+        </div>
+        <h3 class="text-lg font-bold text-white mb-2">Автоматизация & IoT</h3>
+        <p class="text-on-surface-variant text-sm leading-relaxed">
+          Контроль температуры, влажности, освещённости и полива для круглогодичного выращивания культур.
+        </p>
+      </div>
+
+      <div class="glass-panel p-6 border border-white/5 hover:border-primary-container/30 transition-all">
+        <div class="w-10 h-10 rounded-xl bg-primary-container/15 flex items-center justify-center text-primary-container mb-4">
+          <span class="material-symbols-outlined text-2xl">view_in_ar</span>
+        </div>
+        <h3 class="text-lg font-bold text-white mb-2">3D Моделирование</h3>
+        <p class="text-on-surface-variant text-sm leading-relaxed">
+          Точная пространственная CAD-модель с интерактивным WebGL-просмотром Three.js.
+        </p>
+      </div>
+
+      <div class="glass-panel p-6 border border-white/5 hover:border-primary-container/30 transition-all">
+        <div class="w-10 h-10 rounded-xl bg-primary-container/15 flex items-center justify-center text-primary-container mb-4">
+          <span class="material-symbols-outlined text-2xl">solar_power</span>
+        </div>
+        <h3 class="text-lg font-bold text-white mb-2">Энергоэффективность</h3>
+        <p class="text-on-surface-variant text-sm leading-relaxed">
+          Солнечная генерация, селективное остекление и адаптивное фитоосвещение.
+        </p>
+      </div>
+
+      <div class="glass-panel p-6 border border-white/5 hover:border-primary-container/30 transition-all">
+        <div class="w-10 h-10 rounded-xl bg-primary-container/15 flex items-center justify-center text-primary-container mb-4">
+          <span class="material-symbols-outlined text-2xl">devices</span>
+        </div>
+        <h3 class="text-lg font-bold text-white mb-2">Веб-платформа</h3>
+        <p class="text-on-surface-variant text-sm leading-relaxed">
+          Адаптивный стеклянный интерфейс, оптимизированный под любые экраны.
+        </p>
+      </div>
+
+    </div>
+
+  </section>
+
+  <!-- Lightbox Modal Component -->
+  <div id="lightbox-modal" class="lightbox-modal">
+    <div class="lightbox-content">
+      <div class="flex items-center justify-between w-full mb-3 px-2">
+        <div>
+          <span id="lightbox-cat" class="text-xs uppercase tracking-widest text-primary-container font-bold block"></span>
+          <h4 id="lightbox-title" class="text-lg md:text-xl font-bold text-white"></h4>
+        </div>
+        <button id="lightbox-close" class="w-10 h-10 rounded-full glass-panel flex items-center justify-center text-white hover:text-primary-container hover:scale-105 transition-all" title="Закрыть (Esc)">
+          <span class="material-symbols-outlined">close</span>
+        </button>
+      </div>
+
+      <div class="relative flex items-center justify-center">
+        <img id="lightbox-img" src="" alt="" class="lightbox-image"/>
+        
+        <button id="lightbox-prev" class="absolute left-2 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full glass-panel flex items-center justify-center text-white hover:text-primary-container transition-all hover:scale-110 shadow-lg" title="Предыдущее">
+          <span class="material-symbols-outlined text-2xl">arrow_back_ios_new</span>
+        </button>
+        <button id="lightbox-next" class="absolute right-2 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full glass-panel flex items-center justify-center text-white hover:text-primary-container transition-all hover:scale-110 shadow-lg" title="Следующее">
+          <span class="material-symbols-outlined text-2xl">arrow_forward_ios</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="relative z-10 border-t border-white/5 py-8 text-center text-sm text-on-surface-variant/70">
+    <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-4">
+      <div class="flex items-center gap-2">
+        <span class="material-symbols-outlined text-primary-container text-lg">eco</span>
+        <span class="text-white font-medium">Умная Теплица</span>
+      </div>
+      <div>
+        <span>© 2026</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Mobile Bottom Navigation Dock -->
+  <nav id="mobile-nav" class="md:hidden bg-surface-container/90 backdrop-blur-2xl border-t border-white/10 fixed bottom-0 left-0 w-full flex justify-around items-center py-2 px-2 z-50 shadow-[0_-10px_35px_rgba(0,0,0,0.8)]">
+    <a href="#hero" data-nav-target="hero" class="mobile-nav-link active">
+      <span class="material-symbols-outlined text-2xl mb-1">home</span>
+      <span class="text-[10px] uppercase tracking-wider font-semibold">Главная</span>
+    </a>
+    <a href="#gallery" data-nav-target="gallery" class="mobile-nav-link">
+      <span class="material-symbols-outlined text-2xl mb-1">photo_library</span>
+      <span class="text-[10px] uppercase tracking-wider font-semibold">Галерея</span>
+    </a>
+    <a href="#model3d" data-nav-target="model3d" class="mobile-nav-link">
+      <span class="material-symbols-outlined text-2xl mb-1">3d_rotation</span>
+      <span class="text-[10px] uppercase tracking-wider font-semibold">3D Модель</span>
+    </a>
+    <a href="#about" data-nav-target="about" class="mobile-nav-link">
+      <span class="material-symbols-outlined text-2xl mb-1">info</span>
+      <span class="text-[10px] uppercase tracking-wider font-semibold">О проекте</span>
+    </a>
+  </nav>
+
+  <!-- Three.js Dependencies via CDN -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/MTLLoader.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/OBJLoader.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+
+  <!-- Application & 3D Scripts -->
+  <script src="assets/js/viewer3d.js"></script>
+  <script src="assets/js/app.js"></script>
+</body>
+</html>
